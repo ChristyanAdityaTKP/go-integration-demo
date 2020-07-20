@@ -12,9 +12,15 @@ var (
 	AddressRepo addressRepoInterface = &addressRepo{}
 )
 
+const (
+	addressTable = "address"
+)
+
 type addressRepoInterface interface {
 	Initialize(host, port, username, password, database string) *xorm.Engine
 	Create(*Address) (*Address, utils.MessageErr)
+	Get(addressID int64) (*Address, utils.MessageErr)
+	GetAll() ([]*Address, utils.MessageErr)
 }
 
 type addressRepo struct {
@@ -40,12 +46,37 @@ func (ar *addressRepo) Initialize(host, port, username, password, database strin
 }
 
 func (ar *addressRepo) Create(address *Address) (*Address, utils.MessageErr) {
-	affected, err := ar.db.Table("address").Insert(address)
+	_, err := ar.db.Table(addressTable).Insert(address)
 	if err != nil {
-		log.Err(err).Msgf("Create address failed: %s", err)
+		log.Err(err).Msg("Create address failed")
 		return nil, utils.NewInternalServerError("Error when trying to save address")
 	}
-	log.Printf("affected row: %s\n", affected)
 
 	return address, nil
+}
+
+func (ar *addressRepo) Get(addressID int64) (*Address, utils.MessageErr) {
+	result := &Address{}
+
+	log.Printf("address ID: %v", addressID)
+	ar.db.ShowSQL(true)
+	_, err := ar.db.Table(addressTable).ID(addressID).Get(result)
+	if err != nil {
+		log.Err(err).Msg("Get address failed")
+		return nil, utils.NewInternalServerError("Error fetching address")
+	}
+
+	return result, nil
+}
+
+func (ar *addressRepo) GetAll() ([]*Address, utils.MessageErr) {
+	var result []*Address
+
+	err := ar.db.Table(addressTable).Find(&result)
+	if err != nil {
+		log.Err(err).Msg("Get all address failed")
+		return nil, utils.NewInternalServerError("Error fetching addresses")
+	}
+
+	return result, nil
 }

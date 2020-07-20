@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/dh258/go-integration-demo/domain"
 	"github.com/dh258/go-integration-demo/usecase"
@@ -27,4 +28,34 @@ func CreateAddress(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, result)
+}
+
+// GetAllAddresses fetches all addresses in the database
+func GetAllAddresses(c *gin.Context) {
+	result, err := usecase.AddressUsecase.GetAllAddresses()
+	if err != nil {
+		c.JSON(err.Status(), err)
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
+}
+
+// GetAddressByID fetches address by its ID
+func GetAddressByID(c *gin.Context) {
+	id := c.Param("id")
+	sanitizedID, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		errMsg := utils.NewBadRequestError("Address ID should be a number")
+		c.JSON(errMsg.Status(), errMsg)
+		return
+	}
+
+	address, getErr := usecase.AddressUsecase.GetByID(sanitizedID)
+	if getErr != nil {
+		c.JSON(getErr.Status(), getErr)
+		return
+	}
+
+	c.JSON(http.StatusOK, address)
 }

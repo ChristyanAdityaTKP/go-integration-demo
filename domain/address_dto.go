@@ -8,7 +8,7 @@ import (
 )
 
 type Address struct {
-	ID        int64     `json:"id" xorm:"id pk autoincr"`
+	ID        int64     `json:"id" xorm:"id autoincr pk"`
 	Name      string    `json:"name" xorm:"name"`
 	Country   string    `json:"country" xorm:"country"`
 	CreatedAt time.Time `json:"created_at" xorm:"created_at"`
