@@ -1,14 +1,13 @@
 package integrationtest
 
 import (
+	"log"
 	"os"
 	"testing"
 	"time"
 
 	"github.com/dh258/go-integration-demo/domain"
 	"github.com/joho/godotenv"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 	"xorm.io/xorm"
 )
 
@@ -21,16 +20,10 @@ var (
 	db *xorm.Engine
 )
 
-func init() {
-	// Init pretty logging
-	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
-	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
-}
-
 func TestMain(m *testing.M) {
 	err := godotenv.Load(os.ExpandEnv("../.env.test"))
 	if err != nil {
-		log.Fatal().Msg("Failed to get env file.")
+		log.Fatal("Failed to get env file.")
 	}
 	os.Exit(m.Run())
 }
@@ -49,7 +42,7 @@ func setupDB() {
 func clearTable() error {
 	_, err := db.Exec(queryTruncateAddressTable)
 	if err != nil {
-		log.Fatal().Msgf("Failed to truncate table: %v", err)
+		log.Fatalf("Failed to truncate table: %v", err)
 	}
 
 	return nil
@@ -65,7 +58,7 @@ func seedOneAddress() (*domain.Address, error) {
 
 	_, err := db.Table(addressTable).Insert(&address)
 	if err != nil {
-		log.Fatal().Msgf("Failed to insert table: %v", err)
+		log.Fatalf("Failed to insert table: %v", err)
 	}
 
 	return address, nil
@@ -96,7 +89,7 @@ func seedAddresses() ([]*domain.Address, error) {
 	for _, address := range addresses {
 		_, err := db.Table(addressTable).Insert(&address)
 		if err != nil {
-			log.Fatal().Msgf("Failed to insert table: %v", err)
+			log.Fatalf("Failed to insert table: %v", err)
 		}
 
 	}

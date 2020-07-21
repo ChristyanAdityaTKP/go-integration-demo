@@ -9,6 +9,7 @@ require (
 	github.com/lib/pq v1.7.0
 	github.com/rs/zerolog v1.19.0
 	golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae // indirect
+	gopkg.in/go-playground/assert.v1 v1.2.1
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 	xorm.io/xorm v1.0.3
 )

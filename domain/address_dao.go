@@ -3,6 +3,9 @@ package domain
 import (
 	"fmt"
 
+	// Postgres driver
+	_ "github.com/lib/pq"
+
 	"github.com/dh258/go-integration-demo/utils"
 	"github.com/rs/zerolog/log"
 	"xorm.io/xorm"
@@ -34,12 +37,12 @@ func NewAddressRepository(db *xorm.Engine) addressRepoInterface {
 func (ar *addressRepo) Initialize(host, port, username, password, database string) *xorm.Engine {
 	var err error
 
-	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, username, password, database)
-
+	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", username, password, host, port, database)
+	log.Printf("dsn: %s", dsn)
 	// Setup DB
 	ar.db, err = xorm.NewEngine("postgres", dsn)
 	if err != nil {
-		log.Fatal().Msg("Failed to connect to database")
+		log.Fatal().Msgf("Failed to connect to database: %v", err)
 	}
 
 	return ar.db
