@@ -98,3 +98,11 @@ func TestCreateAddress(t *testing.T) {
 
 	}
 }
+
+func TestGetAllAddress(t *testing.T) {
+	// TODO: Add test cases
+}
+
+func TestGetByID(t *testing.T) {
+	// TODO: Add test cases
+}
